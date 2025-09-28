@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where Your Starbucks Money Goes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00704A 0%, #1E3932 50%, #006341 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+        
+        .coffee-price {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px auto;
+            text-align: center;
+            max-width: 400px;
+            border: 2px solid rgba(255,255,255,0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        .price-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #00A862;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 168, 98, 0.5);
+        }
+        
+        .flow-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .flow-item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .flow-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .flow-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .flow-item:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .ingredients { --accent-color: #8B4513; }
+        .labor { --accent-color: #00A862; }
+        .rent { --accent-color: #D4A574; }
+        .corporate { --accent-color: #1E3932; }
+        .taxes { --accent-color: #C8102E; }
+        .profit { --accent-color: #FFD700; }
+        
+        .flow-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--accent-color);
+            animation: bounce 2s infinite;
+        }
+        
+        .flow-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .flow-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00A862;
+        }
+        
+        .flow-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        .visual-section {
+            margin: 60px 0;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .chart-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px auto;
+            max-width: 600px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .pie-chart {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            background: conic-gradient(
+                #8B4513 0% 12%,
+                #00A862 12% 42%,
+                #D4A574 42% 58%,
+                #1E3932 58% 78%,
+                #C8102E 78% 88%,
+                #FFD700 88% 100%
+            );
+            animation: rotate 3s ease-in-out;
+            position: relative;
+        }
+        
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            background: #00704A;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        
+        .interactive-button {
+            background: linear-gradient(45deg, #00A862, #006341);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 10px;
+            box-shadow: 0 4px 15px rgba(0, 168, 98, 0.3);
+        }
+        
+        .interactive-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 168, 98, 0.5);
+        }
+        
+        .fact-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #00A862;
+        }
+        
+        .journey-path {
+            position: relative;
+            margin: 50px 0;
+        }
+        
+        .path-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00A862, transparent);
+            animation: flow 3s infinite;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes flow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .header p { font-size: 1.1rem; }
+            .price-display { font-size: 3rem; }
+            .flow-container { grid-template-columns: 1fr; }
+            .pie-chart { width: 250px; height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☕ Where Your Starbucks Money Goes</h1>
+            <p>Ever wondered what happens to your coffee money after you tap to pay?<br>Let's follow the journey of every dollar you spend on that perfect latte!</p>
+        </div>
+
+        <div class="coffee-price">
+            <div class="price-display">$5.75</div>
+            <p>Average Grande Latte Price</p>
+        </div>
+
+        <div class="journey-path">
+            <div class="path-line"></div>
+        </div>
+
+        <div class="visual-section">
+            <h2 class="section-title">💰 Money Flow Breakdown</h2>
+            <div class="chart-container">
+                <div class="pie-chart"></div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8B4513;"></div>
+                        <span><strong>Coffee & Ingredients (12%)</strong> - $0.69</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00A862;"></div>
+                        <span><strong>Labor & Benefits (30%)</strong> - $1.73</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #D4A574;"></div>
+                        <span><strong>Store Operations (16%)</strong> - $0.92</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #1E3932;"></div>
+                        <span><strong>Corporate & Marketing (20%)</strong> - $1.15</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #C8102E;"></div>
+                        <span><strong>Taxes (10%)</strong> - $0.58</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #FFD700;"></div>
+                        <span><strong>Profit (12%)</strong> - $0.69</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-container">
+            <div class="flow-item ingredients">
+                <div class="flow-icon">☕</div>
+                <div class="flow-title">Coffee & Ingredients</div>
+                <div class="flow-amount">$0.69</div>
+                <div class="flow-description">
+                    Premium coffee beans from ethical sources worldwide, plus milk, syrups, and other ingredients. Starbucks sources from over 400,000 coffee farmers across 30 countries, supporting sustainable farming practices.
+                </div>
+            </div>
+
+            <div class="flow-item labor">
+                <div class="flow-icon">👨‍🍳</div>
+                <div class="flow-title">Labor & Benefits</div>
+                <div class="flow-amount">$1.73</div>
+                <div class="flow-description">
+                    Wages for baristas, shift supervisors, and store managers, plus comprehensive benefits including health insurance, stock options, and the famous college tuition assistance program for partners (employees).
+                </div>
+            </div>
+
+            <div class="flow-item rent">
+                <div class="flow-icon">🏪</div>
+                <div class="flow-title">Store Operations</div>
+                <div class="flow-amount">$0.92</div>
+                <div class="flow-description">
+                    Prime real estate costs, utilities, equipment maintenance, cleaning supplies, and everything needed to keep that cozy coffeehouse atmosphere running smoothly in premium locations.
+                </div>
+            </div>
+
+            <div class="flow-item corporate">
+                <div class="flow-icon">📱</div>
+                <div class="flow-title">Corporate & Marketing</div>
+                <div class="flow-amount">$1.15</div>
+                <div class="flow-description">
+                    Mobile app development, loyalty program rewards, marketing campaigns, new product development, supply chain management, and corporate headquarters operations that keep the Starbucks experience consistent globally.
+                </div>
+            </div>
+
+            <div class="flow-item taxes">
+                <div class="flow-icon">🏛️</div>
+                <div class="flow-title">Taxes</div>
+                <div class="flow-amount">$0.58</div>
+                <div class="flow-description">
+                    Federal, state, and local taxes including corporate income tax, property tax, sales tax, and payroll taxes. These contribute to public infrastructure, education, and community services.
+                </div>
+            </div>
+
+            <div class="flow-item profit">
+                <div class="flow-icon">📈</div>
+                <div class="flow-title">Shareholder Returns</div>
+                <div class="flow-amount">$0.69</div>
+                <div class="flow-description">
+                    Returns to shareholders through dividends and stock appreciation. This includes individual investors, mutual funds, pension funds, and employee stock purchase plans, funding future expansion and innovation.
+                </div>
+            </div>
+        </div>
+
+        <div class="fact-box">
+            <h3>💡 Did You Know?</h3>
+            <p>Starbucks serves over 100 million customers weekly across 33,000+ stores globally! Your $5.75 latte supports a massive network that includes coffee farmers, roasters, logistics teams, and baristas worldwide. Plus, Starbucks pays 100% of tuition for employees' bachelor's degrees!</p>
+        </div>
+
+        <div class="visual-section">
+            <button class="interactive-button" onclick="animateChart()">🎯 Animate Money Flow</button>
+            <button class="interactive-button" onclick="showFacts()">📊 More Coffee Facts</button>
+        </div>
+
+        <div class="footer">
+            <p>💚 Understanding where your money goes helps you make informed choices about your daily coffee ritual</p>
+            <p><small>* Percentages are estimates based on Starbucks financial reports and coffee industry standards</small></p>
+        </div>
+    </div>
+
+    <script>
+        let factIndex = 0;
+        const facts = [
+            "Starbucks purchases over 3% of the world's coffee production annually!",
+            "The average Starbucks partner (employee) receives benefits worth over $1,000 annually.",
+            "Coffee beans typically cost only 10-15 cents per cup, but the experience is worth much more!",
+            "Starbucks operates in 83 countries and territories worldwide.",
+            "The company's mobile app processes over 25 million mobile transactions per week.",
+            "Starbucks sources coffee from over 400,000 farmers globally through ethical trading practices.",
+            "Labor costs at Starbucks are higher than most food service companies due to comprehensive benefits.",
+            "Your Rewards points and free drinks are part of that corporate/marketing budget!"
+        ];
+
+        function animateChart() {
+            const chart = document.querySelector('.pie-chart');
+            chart.style.animation = 'none';
+            setTimeout(() => {
+                chart.style.animation = 'rotate 2s ease-in-out';
+            }, 100);
+            
+            // Animate flow items
+            const items = document.querySelectorAll('.flow-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        item.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 200);
+            });
+        }
+
+        function showFacts() {
+            const factBox = document.querySelector('.fact-box p');
+            factBox.style.opacity = '0';
+            setTimeout(() => {
+                factBox.textContent = facts[factIndex % facts.length];
+                factBox.style.opacity = '1';
+                factIndex++;
+            }, 300);
+        }
+
+        // Add some interactivity on load
+        window.addEventListener('load', () => {
+            setTimeout(animateChart, 1000);
+        });
+
+        // Add scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.flow-item').forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(50px)';
+            item.style.transition = 'all 0.6s ease';
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
