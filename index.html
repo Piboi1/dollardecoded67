@@ -5,112 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Where Your Starbucks Money Goes</title>
 <style>
-/* Global Styles */
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #00704A 0%, #1E3932 50%, #006341 100%);
-    color:white; overflow-x:hidden;
-}
-.container { max-width:1200px; margin:0 auto; padding:20px; }
-.header { text-align:center; margin-bottom:50px; padding:40px 0; }
-.header h1 { font-size:3rem; margin-bottom:20px; text-shadow:2px2px4px rgba(0,0,0,0.3); animation:fadeInDown 1s ease-out; }
-.header p { font-size:1.3rem; opacity:0.9; animation:fadeInUp 1s ease-out 0.5s both; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background:linear-gradient(135deg,#00704A 0%,#1E3932 50%,#006341 100%);
+        color:white; overflow-x:hidden;
+    }
+    .container { max-width:1200px; margin:0 auto; padding:20px; }
+    .header { text-align:center; margin-bottom:50px; padding:40px 0; }
+    .header h1 { font-size:3rem; margin-bottom:20px; text-shadow:2px 2px 4px rgba(0,0,0,0.3); animation:fadeInDown 1s ease-out; }
+    .header p { font-size:1.3rem; opacity:0.9; animation:fadeInUp 1s ease-out 0.5s both; }
+    .coffee-price {
+        background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border-radius:20px;
+        padding:30px; margin:40px auto; text-align:center; max-width:400px;
+        border:2px solid rgba(255,255,255,0.2); animation:pulse 2s infinite;
+    }
+    .price-display { font-size:4rem; font-weight:bold; color:#00A862; margin-bottom:10px; text-shadow:0 0 20px rgba(0,168,98,0.5);}
+    .flow-container {
+        display:grid; grid-template-columns:repeat(auto-fit,minmax(350px,1fr)); gap:30px; margin:50px 0;
+    }
+    .flow-item {
+        background:rgba(255,255,255,0.1); backdrop-filter:blur(10px);
+        border-radius:15px; padding:25px; border:1px solid rgba(255,255,255,0.2);
+        transition: all 0.3s ease; position:relative; overflow:hidden; cursor:pointer;
+    }
+    .flow-item:hover { transform:translateY(-10px) scale(1.05); background:rgba(255,255,255,0.15); box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+    .flow-item::before {
+        content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent-color); transform:scaleX(0); transition:transform 0.3s ease;
+    }
+    .flow-item:hover::before { transform:scaleX(1); }
+    .ingredients { --accent-color:#8B4513; } .labor { --accent-color:#00A862; } .rent { --accent-color:#D4A574; }
+    .corporate { --accent-color:#1E3932; } .taxes { --accent-color:#C8102E; } .profit { --accent-color:#FFD700; }
+    .flow-icon { font-size:3rem; margin-bottom:15px; text-align:center; color:var(--accent-color); animation:bounce 2s infinite; }
+    .flow-title { font-size:1.5rem; font-weight:bold; margin-bottom:10px; color:var(--accent-color);}
+    .flow-amount { font-size:2rem; font-weight:bold; margin-bottom:15px; color:#00A862;}
+    .flow-description { font-size:0.95rem; line-height:1.5; opacity:0.9; }
+    .visual-section { margin:60px 0; text-align:center; }
+    .section-title { font-size:2.5rem; margin-bottom:30px; text-shadow:2px 2px 4px rgba(0,0,0,0.3);}
+    .chart-container {
+        background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border-radius:20px;
+        padding:40px; margin:30px auto; max-width:600px; border:2px solid rgba(255,255,255,0.2);
+    }
+    .pie-chart { width:300px; height:300px; border-radius:50%; margin:0 auto 30px;
+        background:conic-gradient(
+            #8B4513 0% 12%, #00A862 12% 42%, #D4A574 42% 58%, #1E3932 58% 78%, #C8102E 78% 88%, #FFD700 88% 100%
+        ); animation:rotate 3s ease-in-out infinite; position:relative;
+    }
+    .pie-chart::before {
+        content:''; position:absolute; top:50%; left:50%; width:120px; height:120px; background:#00704A; border-radius:50%;
+        transform:translate(-50%, -50%);
+    }
+    .legend { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-top:30px;}
+    .legend-item { display:flex; align-items:center; gap:10px; padding:10px; background:rgba(255,255,255,0.05); border-radius:10px;}
+    .legend-color { width:20px; height:20px; border-radius:3px;}
+    .interactive-button {
+        background:linear-gradient(45deg,#00A862,#006341); color:white; border:none;
+        padding:15px 30px; font-size:1.1rem; font-weight:bold; border-radius:25px;
+        cursor:pointer; transition:all 0.3s ease; margin:20px 10px; box-shadow:0 4px 15px rgba(0,168,98,0.3);
+    }
+    .interactive-button:hover { transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,168,98,0.5);}
+    .fact-box { background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border-radius:15px; padding:25px; margin:30px 0; border-left:5px solid #00A862;}
+    .journey-path { position:relative; margin:50px 0; }
+    .path-line { position:absolute; top:50%; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #00A862, transparent); animation:flow 3s infinite; }
+    .item-selector { margin:40px 0; }
+    .item-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; max-width:1000px; margin:0 auto;}
+    .item-card { background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border-radius:15px; padding:20px; text-align:center; cursor:pointer; transition:all 0.3s ease; border:2px solid transparent; }
+    .item-card:hover { transform:translateY(-5px); background:rgba(255,255,255,0.2); border-color:#00A862; box-shadow:0 10px 30px rgba(0,168,98,0.3);}
+    .item-card.selected { border-color:#00A862; background:rgba(0,168,98,0.2);}
+    .item-icon { font-size:2.5rem; margin-bottom:10px; }
+    .item-name { font-size:1.1rem; font-weight:bold; margin-bottom:5px; }
+    .item-price { font-size:1.3rem; color:#00A862; font-weight:bold; }
+    .footer { text-align:center; padding:40px 0; margin-top:60px; background:rgba(0,0,0,0.2); border-radius:20px; }
 
-/* Item Selector */
-.item-selector { margin:40px 0; }
-.item-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; max-width:1000px; margin:0 auto; }
-.item-card {
-    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius:15px; padding:20px;
-    text-align:center; cursor:pointer; transition:all 0.3s ease; border:2px solid transparent;
-}
-.item-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.2); border-color:#00A862; box-shadow:0 10px 30px rgba(0,168,98,0.3); }
-.item-card.selected { border-color:#00A862; background: rgba(0,168,98,0.2); }
-.item-icon { font-size:2.5rem; margin-bottom:10px; }
-.item-name { font-size:1.1rem; font-weight:bold; margin-bottom:5px; }
-.item-price { font-size:1.3rem; color:#00A862; font-weight:bold; }
-
-/* Coffee Price Display */
-.coffee-price {
-    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-    border-radius:20px; padding:30px; margin:40px auto; text-align:center;
-    max-width:400px; border:2px solid rgba(255,255,255,0.2); animation:pulse 2s infinite;
-}
-.price-display { font-size:4rem; font-weight:bold; color:#00A862; margin-bottom:10px; text-shadow:0 0 20px rgba(0,168,98,0.5); }
-
-/* Journey Path */
-.journey-path { position:relative; margin:50px 0; height:20px; }
-.path-line {
-    position:absolute; top:50%; left:0; right:0; height:3px;
-    background: linear-gradient(90deg, transparent, #00A862, transparent);
-    animation: flow 3s infinite;
-}
-
-/* Flow Items */
-.flow-container { display:grid; grid-template-columns:repeat(auto-fit,minmax(350px,1fr)); gap:30px; margin:50px 0; }
-.flow-item {
-    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius:15px; padding:25px;
-    border:1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; position:relative; overflow:hidden;
-    opacity:0; transform:translateY(50px);
-}
-.flow-item.show { opacity:1; transform:translateY(0); transition:all 0.6s ease; }
-.flow-item:hover { transform:translateY(-10px) scale(1.05); background: rgba(255,255,255,0.15); box-shadow:0 20px 40px rgba(0,0,0,0.3);}
-.flow-item::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent-color); transform:scaleX(0); transition: transform 0.3s ease;
-}
-.flow-item:hover::before { transform:scaleX(1); }
-
-.ingredients { --accent-color:#8B4513; }
-.labor { --accent-color:#00A862; }
-.rent { --accent-color:#D4A574; }
-.corporate { --accent-color:#1E3932; }
-.taxes { --accent-color:#C8102E; }
-.profit { --accent-color:#FFD700; }
-
-.flow-icon { font-size:3rem; margin-bottom:15px; text-align:center; color:var(--accent-color); animation:bounce 2s infinite; }
-.flow-title { font-size:1.5rem; font-weight:bold; margin-bottom:10px; color:var(--accent-color); }
-.flow-amount { font-size:2rem; font-weight:bold; margin-bottom:15px; color:#00A862; }
-.flow-description { font-size:0.95rem; line-height:1.5; opacity:0.9; }
-
-/* Pie Chart & Legend */
-.visual-section { text-align:center; margin:60px 0; }
-.chart-container {
-    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius:20px; padding:40px;
-    margin:30px auto; max-width:600px; border:2px solid rgba(255,255,255,0.2);
-}
-.pie-chart { width:300px; height:300px; border-radius:50%; margin:0 auto 30px; background:conic-gradient(#8B4513 0% 12%, #00A862 12% 42%, #D4A574 42% 58%, #1E3932 58% 78%, #C8102E 78% 88%, #FFD700 88% 100%); position:relative; transition: transform 1s ease-in-out; }
-.pie-chart::before { content:''; position:absolute; top:50%; left:50%; width:120px; height:120px; background:#00704A; border-radius:50%; transform:translate(-50%,-50%); }
-
-.legend { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-top:30px; }
-.legend-item { display:flex; align-items:center; gap:10px; padding:10px; background: rgba(255,255,255,0.05); border-radius:10px; }
-.legend-color { width:20px; height:20px; border-radius:3px; }
-
-/* Buttons & Fact Box */
-.interactive-button { background: linear-gradient(45deg,#00A862,#006341); color:white; border:none; padding:15px 30px; font-size:1.1rem; font-weight:bold; border-radius:25px; cursor:pointer; transition:all 0.3s ease; margin:20px 10px; box-shadow:0 4px 15px rgba(0,168,98,0.3); }
-.interactive-button:hover { transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,168,98,0.5); }
-.fact-box { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius:15px; padding:25px; margin:30px 0; border-left:5px solid #00A862; }
-.footer { text-align:center; padding:40px 0; margin-top:60px; background: rgba(0,0,0,0.2); border-radius:20px; }
-
-/* Animations */
-@keyframes fadeInDown { from {opacity:0; transform:translateY(-50px);} to {opacity:1; transform:translateY(0);} }
-@keyframes fadeInUp { from {opacity:0; transform:translateY(50px);} to {opacity:1; transform:translateY(0);} }
-@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
-@keyframes bounce { 0%,20%,50%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-10px);} 60%{transform:translateY(-5px);} }
-@keyframes flow { 0%{transform:translateX(-100%);} 100%{transform:translateX(100%);} }
-
-@media(max-width:768px){
-    .header h1{font-size:2rem;}
-    .header p{font-size:1.1rem;}
-    .price-display{font-size:3rem;}
-    .flow-container{grid-template-columns:1fr;}
-    .pie-chart{width:250px;height:250px;}
-}
+    @keyframes fadeInDown { from{opacity:0; transform:translateY(-50px);} to{opacity:1; transform:translateY(0);} }
+    @keyframes fadeInUp { from{opacity:0; transform:translateY(50px);} to{opacity:1; transform:translateY(0);} }
+    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.05);} }
+    @keyframes bounce { 0%,20%,50%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-10px);} 60%{transform:translateY(-5px);} }
+    @keyframes rotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+    @keyframes flow { 0%{transform:translateX(-100%);}100%{transform:translateX(100%);} }
+    @media(max-width:768px){.header h1{font-size:2rem}.header p{font-size:1.1rem}.price-display{font-size:3rem}.flow-container{grid-template-columns:1fr}.pie-chart{width:250px;height:250px;}}
 </style>
 </head>
 <body>
 <div class="container">
-
-    <!-- Header -->
     <div class="header">
         <h1>☕ Where Your Starbucks Money Goes</h1>
         <p>Ever wondered what happens to your coffee money after you tap to pay?<br>Let's follow the journey of every dollar you spend on that perfect latte!</p>
@@ -118,30 +95,30 @@ body {
 
     <!-- Item Selector -->
     <div class="item-selector">
-        <h2 style="text-align:center; margin-bottom:30px;">Choose Your Starbucks Item</h2>
+        <h2 style="text-align:center;margin-bottom:30px;">Choose Your Starbucks Item</h2>
         <div class="item-grid">
-            <div class="item-card" onclick="selectItem('Grande Latte','$5.75',[0.12,0.30,0.16,0.20,0.10,0.12])">
+            <div class="item-card" onclick="selectItem('Grande Latte','$5.75',[0.12,0.30,0.16,0.20,0.10,0.12],event)">
                 <div class="item-icon">☕</div><div class="item-name">Grande Latte</div><div class="item-price">$5.75</div>
             </div>
-            <div class="item-card" onclick="selectItem('Venti Frappuccino','$6.25',[0.12,0.30,0.16,0.20,0.10,0.12])">
+            <div class="item-card" onclick="selectItem('Venti Frappuccino','$6.25',[0.12,0.30,0.16,0.20,0.10,0.12],event)">
                 <div class="item-icon">🥤</div><div class="item-name">Venti Frappuccino</div><div class="item-price">$6.25</div>
             </div>
-            <div class="item-card" onclick="selectItem('Grande Americano','$3.85',[0.12,0.30,0.16,0.20,0.10,0.12])">
+            <div class="item-card" onclick="selectItem('Grande Americano','$3.85',[0.12,0.30,0.16,0.20,0.10,0.12],event)">
                 <div class="item-icon">☕</div><div class="item-name">Grande Americano</div><div class="item-price">$3.85</div>
             </div>
-            <div class="item-card" onclick="selectItem('Breakfast Sandwich','$7.95',[0.12,0.30,0.16,0.20,0.10,0.12])">
+            <div class="item-card" onclick="selectItem('Breakfast Sandwich','$7.95',[0.12,0.30,0.16,0.20,0.10,0.12],event)">
                 <div class="item-icon">🥪</div><div class="item-name">Breakfast Sandwich</div><div class="item-price">$7.95</div>
             </div>
-            <div class="item-card" onclick="selectItem('Croissant','$3.45',[0.12,0.30,0.16,0.20,0.10,0.12])">
+            <div class="item-card" onclick="selectItem('Croissant','$3.45',[0.12,0.30,0.16,0.20,0.10,0.12],event)">
                 <div class="item-icon">🥐</div><div class="item-name">Croissant</div><div class="item-price">$3.45</div>
             </div>
-            <div class="item-card" onclick="selectItem('Grande Cold Brew','$4.45',[0.12,0.30,0.16,0.20,0.10,0.12])">
+            <div class="item-card" onclick="selectItem('Grande Cold Brew','$4.45',[0.12,0.30,0.16,0.20,0.10,0.12],event)">
                 <div class="item-icon">🧊</div><div class="item-name">Grande Cold Brew</div><div class="item-price">$4.45</div>
             </div>
         </div>
     </div>
 
-    <!-- Selected Price Display -->
+    <!-- Selected Price -->
     <div class="coffee-price">
         <div class="price-display" id="selected-price">$5.75</div>
         <p id="selected-item">Grande Latte</p>
@@ -150,7 +127,7 @@ body {
     <!-- Journey Path -->
     <div class="journey-path"><div class="path-line"></div></div>
 
-    <!-- Money Flow Items -->
+    <!-- Flow Items -->
     <div class="flow-container">
         <div class="flow-item ingredients"><div class="flow-icon">☕</div><div class="flow-title">Coffee & Ingredients</div><div class="flow-amount" id="flow1">$0.69</div><div class="flow-description">Premium coffee beans, milk, syrups. Starbucks sources ethically worldwide.</div></div>
         <div class="flow-item labor"><div class="flow-icon">👨‍🍳</div><div class="flow-title">Labor & Benefits</div><div class="flow-amount" id="flow2">$1.73</div><div class="flow-description">Wages and benefits for partners, including tuition support.</div></div>
@@ -193,7 +170,15 @@ body {
         <p>💚 Understanding where your money goes helps you make informed choices about your daily coffee ritual</p>
         <p><small>* Percentages are estimates based on Starbucks financial reports and coffee industry standards</small></p>
     </div>
+</div>
 
+<!-- Modal for Sector Details -->
+<div id="sectorModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:1000;">
+    <div style="background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:20px;padding:30px;max-width:600px;width:90%;color:white;position:relative;">
+        <span id="closeModal" style="position:absolute; top:15px; right:20px; font-size:1.5rem; cursor:pointer;">✖</span>
+        <h2 id="sectorTitle"></h2>
+        <p id="sectorDescription" style="line-height:1.5; opacity:0.9;"></p>
+    </div>
 </div>
 
 <script>
@@ -207,71 +192,83 @@ const facts = [
     "Labor costs at Starbucks are higher than most food service companies due to comprehensive benefits.",
     "Your Rewards points and free drinks are part of that corporate/marketing budget!"
 ];
-let factIndex = 0;
-
-const flowIds = ["flow1","flow2","flow3","flow4","flow5","flow6"];
-const flowPercentNames = ["Coffee & Ingredients","Labor & Benefits","Store Operations","Corporate & Marketing","Taxes","Profit"];
-
-function selectItem(name, price, percentages){
-    document.getElementById("selected-item").textContent = name;
-    document.getElementById("selected-price").textContent = price;
-    // Update flow amounts
-    const amount = parseFloat(price.replace('$',''));
-    percentages.forEach((p,i)=>{
-        const val = (amount*p).toFixed(2);
-        document.getElementById(flowIds[i]).textContent = `$${val}`;
-    });
-    // Update pie chart
-    const percents = percentages.map(p=>p*100);
-    const colors = ["#8B4513","#00A862","#D4A574","#1E3932","#C8102E","#FFD700"];
-    let gradient = '';
-    let start = 0;
-    percents.forEach((p,i)=>{
-        gradient += `${colors[i]} ${start}% ${start+p}%, `;
-        start+=p;
-    });
-    document.getElementById('pieChart').style.background = `conic-gradient(${gradient.slice(0,-2)})`;
-    // Highlight selected item
-    document.querySelectorAll('.item-card').forEach(card=>card.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
-}
+let factIndex=0;
 
 function animateChart(){
-    const chart = document.getElementById('pieChart');
-    chart.style.transition = 'transform 1s';
-    chart.style.transform = 'rotate(360deg)';
-    setTimeout(()=>{ chart.style.transform = 'rotate(0deg)'; },1000);
-    // Animate flow items
-    document.querySelectorAll('.flow-item').forEach((item,index)=>{
-        item.style.transition = 'transform 0.3s';
-        setTimeout(()=>{ item.style.transform='scale(1.1)'; setTimeout(()=>{item.style.transform='scale(1)';},300); }, index*200);
+    const chart=document.getElementById('pieChart');
+    chart.style.animation='none';
+    setTimeout(()=>{chart.style.animation='rotate 2s ease-in-out';},100);
+    const items=document.querySelectorAll('.flow-item');
+    items.forEach((item,index)=>{
+        setTimeout(()=>{
+            item.style.transform='scale(1.1)';
+            setTimeout(()=>{item.style.transform='scale(1)';},300);
+        },index*200);
     });
 }
 
 function showFacts(){
-    const factBox = document.getElementById('fact-content');
+    const factBox=document.getElementById('fact-content');
     factBox.style.opacity='0';
     setTimeout(()=>{
-        factBox.textContent = facts[factIndex%facts.length];
+        factBox.textContent=facts[factIndex % facts.length];
         factBox.style.opacity='1';
         factIndex++;
     },300);
 }
 
-// Scroll animations
-const observer = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-        if(entry.isIntersecting){ entry.target.classList.add('show'); }
+// Item Selector
+function selectItem(name,price,percentages,event){
+    document.getElementById('selected-item').textContent=name;
+    document.getElementById('selected-price').textContent=price;
+    const amounts=[...document.querySelectorAll('.flow-amount')];
+    amounts.forEach((amt,index)=>{
+        let val=(parseFloat(price.replace('$',''))*percentages[index]).toFixed(2);
+        amt.textContent='$'+val;
     });
-});
-document.querySelectorAll('.flow-item').forEach(item=>observer.observe(item));
+    document.querySelectorAll('.item-card').forEach(c=>c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+}
 
-// Initial load animation
-window.addEventListener('load',()=>{
-    document.querySelectorAll('.flow-item').forEach((item,index)=>{
-        setTimeout(()=>{ item.classList.add('show'); }, index*200);
+// Sector Details
+const sectorDetails={
+    "Coffee & Ingredients":"Premium coffee beans sourced ethically worldwide. Includes milk, syrups, and other ingredients. Starbucks supports over 400,000 farmers in 30 countries.",
+    "Labor & Benefits":"Wages for baristas, shift supervisors, and store managers, plus benefits including health insurance, stock options, and college tuition assistance.",
+    "Store Operations":"Rent, utilities, equipment, maintenance, cleaning supplies, and everything needed to keep stores running smoothly.",
+    "Corporate & Marketing":"Mobile app development, loyalty programs, marketing campaigns, product development, and corporate HQ operations.",
+    "Taxes":"Federal, state, and local taxes, including corporate income tax, property tax, and payroll taxes.",
+    "Shareholder Returns":"Returns to shareholders through dividends and stock appreciation, funding expansion and innovation globally."
+};
+
+// Clickable Flow Items
+document.querySelectorAll('.flow-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+        const sector=item.querySelector('.flow-title').textContent;
+        document.getElementById('sectorTitle').textContent=sector;
+        document.getElementById('sectorDescription').textContent=sectorDetails[sector];
+        document.getElementById('sectorModal').style.display='flex';
     });
 });
+document.getElementById('closeModal').addEventListener('click',()=>{document.getElementById('sectorModal').style.display='none';});
+
+// Scroll animation
+const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.style.opacity='1';
+            entry.target.style.transform='translateY(0)';
+        }
+    });
+});
+document.querySelectorAll('.flow-item').forEach(item=>{
+    item.style.opacity='0';
+    item.style.transform='translateY(50px)';
+    item.style.transition='all 0.6s ease';
+    observer.observe(item);
+});
+
+// Initial Animate
+window.addEventListener('load',()=>{setTimeout(animateChart,1000);});
 </script>
 </body>
 </html>
